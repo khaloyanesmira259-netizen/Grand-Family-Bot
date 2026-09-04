@@ -1,36 +1,31 @@
 {
-  "name": "@workspace/api-server",
-  "version": "0.0.0",
+  "name": "grand-family-bot",
+  "version": "1.0.0",
   "private": true,
+  "description": "Grand Family Discord bot with a persistent SQLite database and production supervisor.",
   "type": "module",
   "scripts": {
-    "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
     "build": "node ./build.mjs",
-    "start": "node --enable-source-maps ./dist/index.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
-  },
-  "engines": {
-    "node": ">=20"
+    "dev": "npm run build && node --enable-source-maps ./host-launcher.mjs",
+    "start": "node --enable-source-maps ./host-launcher.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify": "npm run typecheck && npm run build"
   },
   "dependencies": {
-    "better-sqlite3": "^12.4.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
+    "better-sqlite3": "^11.10.0",
     "discord.js": "^14.22.1",
-    "drizzle-orm": "catalog:",
     "express": "^5.2.1",
-    "pino": "^9.14.0",
-    "pino-http": "^10.5.0"
+    "pino": "^9.14.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "catalog:",
-    "esbuild": "0.27.3",
-    "esbuild-plugin-pino": "^2.3.3",
-    "pino-pretty": "^13.1.3",
-    "thread-stream": "3.1.0"
+    "@types/node": "^22.15.21",
+    "esbuild": "^0.25.4",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20 <25",
+    "npm": ">=10"
   }
 }
