@@ -2,7 +2,7 @@ import app from "./app";
 import { createDiscordBot } from "./bot";
 import { BotDatabase } from "./bot/database";
 import { BotHostController } from "./host/controller";
-import { createHostRouter } from "./host/ui";
+import { createHostRouter } from "./host/dashboard";
 import { logger } from "./lib/logger";
 import { fileURLToPath } from "node:url";
 
