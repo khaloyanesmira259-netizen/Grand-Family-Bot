@@ -1,30 +1,31 @@
 # Grand Family Bot
 
-Grand Family Bot is a long-running Node.js Discord worker with automatic Gateway reconnects, a watchdog, process recovery, and SQLite persistence.
+Production-ready Discord bot for deployment from GitHub to an external 24/7 host.
 
-## Run
+## Runtime
 
-```bash
-pnpm install
-pnpm run typecheck
-pnpm run build
-pnpm run start
+- Node.js 22
+- `npm start` launches the supervisor
+- the supervisor restarts the Discord worker after a crash or stale heartbeat
+- SQLite is stored at `SQLITE_PATH` (default: `./data/families.sqlite`)
+- `GET /health` returns a lightweight host health response
+- when `PORT` is provided, the built-in supervisor dashboard is available at `/`
+
+## Required environment variable
+
+```text
+DISCORD_BOT_TOKEN=your-discord-bot-token
 ```
 
-Required environment variable:
+The token is read only from `DISCORD_BOT_TOKEN`. It is not included in this repository, the image, or the database.
 
-- `DISCORD_BOT_TOKEN` — store this in the host's secret manager, never in GitHub or a file.
+## Commands
 
-Optional environment variables:
+```bash
+npm install
+npm run typecheck
+npm run build
+npm start
+```
 
-- `PORT` — HTTP health and host dashboard port.
-- `SQLITE_PATH` — path on persistent storage for `families.sqlite`; defaults to `./data/families.sqlite`.
-- `LOG_LEVEL` — Pino log level.
-
-Health checks are available at `/health` and `/api/healthz`. The supervisor dashboard is available at `/api/host` when `PORT` is set.
-
-## Hosting requirements
-
-Use a host that keeps a Node.js worker running continuously, supports Discord WebSocket connections, restarts a crashed process, and provides persistent storage for SQLite. Configure `SQLITE_PATH` to that persistent volume. Enable automatic deploys from the `main` branch only after the host has been configured with `DISCORD_BOT_TOKEN` as a secret.
-
-The Discord application must have Message Content and Server Members intents enabled, and its bot role must be above the roles it manages.
+Keep the host's data directory or persistent volume mounted at the path containing `SQLITE_PATH`; otherwise SQLite data will be lost when the container is replaced.
