@@ -1,67 +1,30 @@
 # Grand Family Bot
 
-Самостоятельный Discord-бот для создания и управления семьями. Проект запускается как обычное Node.js-приложение и не зависит от Replit.
+Grand Family Bot is a long-running Node.js Discord worker with automatic Gateway reconnects, a watchdog, process recovery, and SQLite persistence.
 
-## Возможности
-
-- `/setup` и русская локализация `/настройка` — двухэтапная настройка владельцем Discord Application.
-- `/panel` и русская локализация `/панель` — создание или обновление единой панели.
-- Заявка с никнеймом, названием семьи, HEX-цветом и рангом 1–10.
-- Приватный канал для ровно трёх изображений-доказательств.
-- Проверка заявок кураторами по двум настроенным ролям.
-- Автоматическое создание ролей `Семья <название>` и `LD <название>`, категории и текстового/голосового каналов.
-- Передача семьи по Discord ID или mention через заявку куратору.
-- Удаление семьи только после одобрения куратора.
-- SQLite с включённым WAL mode и сохранением данных после перезапуска.
-- `GET /health` с ответом `{"status":"ok"}`.
-
-## Быстрый запуск
+## Run
 
 ```bash
 pnpm install
-cp .env.example .env
-# заполните DISCORD_BOT_TOKEN
+pnpm run typecheck
 pnpm run build
 pnpm run start
 ```
 
-В production-среде задавайте переменные окружения напрямую. Токен не хранится в репозитории, логах или архиве.
+Required environment variable:
 
-## Требования Discord
+- `DISCORD_BOT_TOKEN` — store this in the host's secret manager, never in GitHub or a file.
 
-Боту нужны права `Manage Roles`, `Manage Channels`, `View Channels`, `Send Messages`, `Read Message History`, `Attach Files`, `Connect` и `Speak`. Его роль должна находиться выше всех настроечных и создаваемых семейных ролей.
+Optional environment variables:
 
-Для сбора вложений в Developer Portal включите **Message Content Intent** и **Server Members Intent**.
+- `PORT` — HTTP health and host dashboard port.
+- `SQLITE_PATH` — path on persistent storage for `families.sqlite`; defaults to `./data/families.sqlite`.
+- `LOG_LEVEL` — Pino log level.
 
-## Настройка в Discord
+Health checks are available at `/health` and `/api/healthz`. The supervisor dashboard is available at `/api/host` when `PORT` is set.
 
-Владелец приложения запускает `/setup` и вводит ровно 8 значений в двух формах:
+## Hosting requirements
 
-1. ID канала панели.
-2. ID канала заявлений.
-3. ID роли главного куратора.
-4. ID роли заместителя главного куратора.
-5. ID роли лидера.
-6. ID роли заместителя.
-7. ID роли старшего состава.
-8. ID базовой роли семьи.
+Use a host that keeps a Node.js worker running continuously, supports Discord WebSocket connections, restarts a crashed process, and provides persistent storage for SQLite. Configure `SQLITE_PATH` to that persistent volume. Enable automatic deploys from the `main` branch only after the host has been configured with `DISCORD_BOT_TOKEN` as a secret.
 
-Категория, каналы, роли конкретной семьи и разрешения создаются ботом автоматически. После настройки запустите `/panel`.
-
-## Ранги
-
-- 1–7: только роль `Семья <название>`.
-- 8: семья + настроенная роль старшего состава.
-- 9: семья + старший состав + настроенная роль заместителя.
-- 10: семья + старший состав + заместитель + `LD <название>`.
-
-При выдаче ранга управляемые роли этой схемы сначала очищаются, поэтому лишние роли из этой системы не остаются.
-
-## Проверка
-
-```bash
-pnpm run typecheck
-pnpm run build
-```
-
-Подробная инструкция переноса на Styz находится в `STYZ_DEPLOY.md`.
+The Discord application must have Message Content and Server Members intents enabled, and its bot role must be above the roles it manages.
