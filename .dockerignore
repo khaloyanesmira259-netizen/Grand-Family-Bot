@@ -1,9 +1,8 @@
 node_modules
 dist
 data
-.git
-.github
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 .env
-.env.*
-*.log
-README.txt
+.tsbuildinfo
